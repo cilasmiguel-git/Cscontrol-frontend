@@ -1,0 +1,99 @@
+.header {
+    width: 96.9%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px 20px;
+    position: relative;
+    /* Adicione esta linha */
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    margin: 10px;
+}
+.logo-container a {
+    text-decoration: none;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.car-icon {
+    font-size: 30px;
+    margin-right: 10px;
+}
+
+.logo-text {
+    font-size: 20px;
+}
+
+.nav {
+    display: flex;
+    align-items: center;
+    margin: 20px;
+}
+
+.menu-icon {
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.menu-list {
+    list-style-type: none;
+    display: none;
+    position: absolute;
+    /* Altere para 'absolute' */
+    top: 55%;
+    /* Posicione o menu abaixo do cabeçalho */
+    right: 15px;
+    /* Alinhe o menu à direita */
+    background-color: rgba(128, 128, 128, 0.822);
+    flex-direction: column;
+    align-items: end;
+    width: 150px;
+    /* Defina a largura desejada para o menu */
+    transition: 1s;
+    margin: 0;
+}
+
+.menu-list li {
+    display: flex;
+    align-items: center;
+    margin-left: 20px;
+    cursor: pointer;
+    padding: 6px;
+    width: 100%;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    font: bold 11pt arial;
+    text-decoration: none;
+    margin-right: 25px;
+}
+.menu-list a {
+    text-decoration: none;
+    color: white;
+}
+
+.login-icon {
+    font-size: 20px;
+    margin-right: 5px;
+}
+
+.register-icon {
+    font-size: 20px;
+    margin-right: 5px;
+}
+
+/* Exibir o menu ao clicar no ícone de menu */
+.nav:hover .menu-list {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
