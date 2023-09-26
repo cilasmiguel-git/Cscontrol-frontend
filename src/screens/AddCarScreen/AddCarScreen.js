@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import apiAxios from '../../api/apiAxios';
 import Header from '../../components/header/Header';
+import Footer from '../../components/footer/Footer';
 
 const AddCarScreen = () => {
   const [newFood, setNewFood] = useState({});
@@ -12,7 +13,7 @@ const AddCarScreen = () => {
     apiAxios
       .get('/car')
       .then((response) => {
-        setFoods(response.data);
+        setFoods(response.data); 
       })
       .catch((error) => {
         console.error('Erro ao listar carros:', error);
@@ -22,6 +23,7 @@ const AddCarScreen = () => {
   const handleInputChange = (e) => {
     setNewFood({ ...newFood, [e.target.name]: e.target.value });
   };
+
 
   const handleAddCar = () => {
     apiAxios
@@ -42,6 +44,11 @@ const AddCarScreen = () => {
           title: '',
           image: '',
           price: '',
+          marca: '', // Adicione o campo marca
+          modelo: '', // Adicione o campo modelo
+          anoFabricacao: '', // Adicione o campo anoFabricacao
+          anoModelo: '', // Adicione o campo anoModelo
+          descricao: '', // Adicione o campo descricao
         });
 
         // Defina a mensagem de sucesso
@@ -80,9 +87,45 @@ const AddCarScreen = () => {
             value={newFood.price || ''}
             onChange={handleInputChange}
           />
+          {/* Novos campos */}
+          <input
+            type="text"
+            name="marca"
+            placeholder="Marca"
+            value={newFood.marca}
+            onChange={handleInputChange}
+          />
+          <input
+            type="text"
+            name="modelo"
+            placeholder="Modelo"
+            value={newFood.modelo}
+            onChange={handleInputChange}
+          />
+          <input
+            type="number"
+            name="anoFabricacao"
+            placeholder="Ano de Fabricação"
+            value={newFood.anoFabricacao}
+            onChange={handleInputChange}
+          />
+          <input
+            type="number"
+            name="anoModelo"
+            placeholder="Ano do Modelo"
+            value={newFood.anoModelo}
+            onChange={handleInputChange}
+          />
+          <textarea
+            name="descricao"
+            placeholder="Descrição"
+            value={newFood.descricao}
+            onChange={handleInputChange}
+          />
           <button onClick={handleAddCar}>Adicionar</button>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

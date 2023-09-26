@@ -1,33 +1,49 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import apiAxios from '../../api/apiAxios';
-import "./home.css"
-import { IoIosSearch, IoIosOptions } from 'react-icons/io'; // Importe os ícones desejados
+import "./home.css";
+import { IoIosSearch, IoIosOptions } from 'react-icons/io';
 import Header from '../../components/header/Header';
+import Footer from '../../components/footer/Footer';
+
 const Home = () => {
-
-
     const [searchValue, setSearchValue] = useState('');
-    const [filteredFoods, setFilteredFoods] = useState([]);
-
-    const [foods, setFoods] = useState([]);
+    const [filteredCars, setFilteredCars] = useState([]);
+    const [allCars, setAllCars] = useState([]);
+    const [reservedCarIds, setReservedCarIds] = useState([]);
 
     useEffect(() => {
-        apiAxios.get('/car')
+        // Busque a lista de carros reservados do seu back-end e obtenha os IDs dos carros reservados
+        apiAxios.get('/reserved-car/list-reserved-cars')
             .then((response) => {
-                setFoods(response.data);
+                const reservedIds = response.data.map((reservedCar) => reservedCar.car.id);
+                setReservedCarIds(reservedIds);
             })
             .catch((error) => {
-                console.error('Erro ao listar comidas:', error);
+                console.error('Erro ao listar carros reservados:', error);
+            });
+
+        // Busque a lista de todos os carros disponíveis
+        apiAxios.get('/car')
+            .then((response) => {
+                setAllCars(response.data);
+            })
+            .catch((error) => {
+                console.error('Erro ao listar carros:', error);
             });
     }, []);
-    useEffect(() => {
-        // Atualize a lista de carros filtrados com base no valor de pesquisa
-        const filteredCars = foods.filter((food) =>
-            food.title.toLowerCase().includes(searchValue.toLowerCase())
-        );
-        setFilteredFoods(filteredCars);
-    }, [searchValue, foods]);
 
+    useEffect(() => {
+        // Filtre os carros disponíveis (não reservados)
+        const availableCars = allCars.filter((car) => !reservedCarIds.includes(car.id));
+
+        // Em seguida, aplique a filtragem com base no valor da pesquisa
+        const filteredAvailableCars = availableCars.filter((car) =>
+            car.title.toLowerCase().includes(searchValue.toLowerCase())
+        );
+
+        setFilteredCars(filteredAvailableCars);
+    }, [searchValue, allCars, reservedCarIds]);
 
     return (
         <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
@@ -44,21 +60,23 @@ const Home = () => {
             </div>
             <div className='full-list-car'>
                 <div className='list-car'>
-                    {filteredFoods.map((food) => (
-                        <div className='list-car-item' key={food.id}>
-                            <img src={food.image} alt={food.title} />
+                    {filteredCars.map((car) => (
+                        <div className='list-car-item' key={car.id}>
+                            <img src={car.image} alt={car.title} />
                             <div className='list-car-item-content'>
-                                <strong>{food.title}</strong> <br />
+                                <strong>{car.title}</strong> <br />
                                 <div>
-                                    Preço: {food.price}
+                                    <p>  R${car.price}/dia </p>
+                                    <Link className='button-open-detail' to={`/car/${car.id}`}>Reservar</Link>
                                 </div>
                             </div>
                         </div>
                     ))}
                 </div>
             </div>
+            <Footer />
         </div>
     )
 }
 
-export default Home
+export default Home;

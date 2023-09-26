@@ -5,6 +5,7 @@ import AddCarScreen from './screens/AddCarScreen/AddCarScreen';
 import Home from './screens/Home/Home';
 import Register from './screens/Register/Register';
 import LoginScreen from './screens/LoginScreen/LoginScreen';
+import CarDetail from './screens/CarDetail/CarDetail';
 
 function App() {
   return (
@@ -27,6 +28,8 @@ function App() {
             path="/register"
             element={<Register />}
           />
+          <Route path="/car/:carId" element={<CarDetail/>} />
+
         </Routes>
       </Router>
     </div>

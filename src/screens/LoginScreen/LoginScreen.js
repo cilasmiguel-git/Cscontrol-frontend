@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import Header from '../../components/header/Header';
 import { useNavigate } from 'react-router';
 import "../LoginScreen/loginscreen.css";
+import Footer from '../../components/footer/Footer';
 const LoginScreen = () => {
     const navigate = useNavigate()
     const dispatch = useDispatch();
@@ -46,6 +47,7 @@ const LoginScreen = () => {
                     <button onClick={handleLogin}>Login</button>
                 </div>
             </div>
+            <Footer/>
         </div>
     );
 };

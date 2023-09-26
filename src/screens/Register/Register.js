@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import { signupUser } from '../../actions/authenticationAction';
 import { useNavigate } from 'react-router';
 import './register.css'; // Importe o arquivo CSS aqui
+import Footer from '../../components/footer/Footer';
 
 const Register = () => {
     const navigate = useNavigate()
@@ -48,6 +49,7 @@ const Register = () => {
                     <button onClick={handleRegister}>Register</button>
                 </div>
             </div>
+            <Footer/>
         </div>
     )
 }
