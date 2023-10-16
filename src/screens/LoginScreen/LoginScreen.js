@@ -9,19 +9,22 @@ const LoginScreen = () => {
     const navigate = useNavigate()
     const dispatch = useDispatch();
 
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-
-    const handleLogin = () => {
-        dispatch(loginUser(username, password));
+    const [loginData, setLoginData] = useState({
+        login: '',
+        password: '',
+    });
+    const handleLogin = async (e) => {
+        e.preventDefault();
+        await dispatch(loginUser(loginData));
         navigate('/')
     };
 
     const isAuthenticated = useSelector(state => state.authentication.isAuthenticated);
     const isAuthenticated2 = useSelector(state => state.authentication.user);
+    //console.log(isAuthenticated2)
+    //console.log(isAuthenticated);
 
-    console.log(isAuthenticated2)
-    console.log(isAuthenticated);
+
 
     return (
 
@@ -33,21 +36,21 @@ const LoginScreen = () => {
                     <label>Usuario:</label>
                     <input
                         type="text"
-                        placeholder="Username"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
+                        placeholder="Login"
+                        value={loginData.login}
+                        onChange={(e) => setLoginData({ ...loginData, login: e.target.value })}
                     />
-                    <label>Senha:</label>
+                    <label>senha:</label>
                     <input
                         type="password"
-                        placeholder="Password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder="Senha"
+                        value={loginData.password}
+                        onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
                     />
                     <button onClick={handleLogin}>Login</button>
                 </div>
             </div>
-            <Footer/>
+            <Footer />
         </div>
     );
 };

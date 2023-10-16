@@ -16,5 +16,4 @@ if (userFromCookie) {
   console.log('User info from cookie:', JSON.parse(userFromCookie));
   store.dispatch({ type: 'LOGIN_SUCCESS', payload: JSON.parse(userFromCookie) });
 }
-
 export default store;

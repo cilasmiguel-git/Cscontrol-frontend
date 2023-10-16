@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import apiAxios from '../../api/apiAxios';
 import "./home.css";
 import { IoIosSearch, IoIosOptions } from 'react-icons/io';
 import Header from '../../components/header/Header';
 import Footer from '../../components/footer/Footer';
+import { request } from '../../api/axios_helper';
+import { useSelector } from 'react-redux';
 
 const Home = () => {
     const [searchValue, setSearchValue] = useState('');
@@ -12,9 +13,12 @@ const Home = () => {
     const [allCars, setAllCars] = useState([]);
     const [reservedCarIds, setReservedCarIds] = useState([]);
 
+    const isAuthenticated = useSelector(state => state.authentication.isAuthenticated);
+    const user = useSelector(state => state.authentication);
+    console.log(user)
     useEffect(() => {
         // Busque a lista de carros reservados do seu back-end e obtenha os IDs dos carros reservados
-        apiAxios.get('/reserved-car/list-reserved-cars')
+        request('GET', '/reserved-car/list-reserved-cars')
             .then((response) => {
                 const reservedIds = response.data.map((reservedCar) => reservedCar.car.id);
                 setReservedCarIds(reservedIds);
@@ -24,14 +28,14 @@ const Home = () => {
             });
 
         // Busque a lista de todos os carros disponíveis
-        apiAxios.get('/car')
+        request('GET', '/car')
             .then((response) => {
                 setAllCars(response.data);
             })
             .catch((error) => {
                 console.error('Erro ao listar carros:', error);
             });
-    }, []);
+    }, [isAuthenticated]);
 
     useEffect(() => {
         // Filtre os carros disponíveis (não reservados)
@@ -66,7 +70,7 @@ const Home = () => {
                             <div className='list-car-item-content'>
                                 <strong>{car.title}</strong> <br />
                                 <div>
-                                    <p>  R${car.price}/dia </p>
+                                    <p> R${car.price}/dia </p>
                                     <Link className='button-open-detail' to={`/car/${car.id}`}>Reservar</Link>
                                 </div>
                             </div>

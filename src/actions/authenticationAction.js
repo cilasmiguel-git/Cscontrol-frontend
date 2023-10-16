@@ -1,6 +1,4 @@
-// authenticationActions.js
-import { useNavigate } from 'react-router';
-import apiAxios from '../api/apiAxios';
+import { request } from '../api/axios_helper'; // Importe a função request apropriada
 import Cookies from 'js-cookie';
 
 // Ação de login bem-sucedido
@@ -15,40 +13,44 @@ export const loginFailure = (error) => ({
     payload: error,
 });
 
-// Ação de login assíncrono (pode ser usado com Redux Thunk)
-export const loginUser = (username, password) => {
+// Ação de login assíncrono
+export const loginUser = (formData) => {
     return async (dispatch) => {
         try {
-            // Faça uma solicitação ao servidor para autenticar o usuário
-            const response = await apiAxios.post('/user/login', { username, password });
-            
+            const response = await request('POST', '/auth/login', formData, { withCredentials: true }); // Adicione esta linha
+
             if (response.status === 200) {
-                // Se a autenticação for bem-sucedida, atualize o estado de autenticação
-                dispatch(loginSuccess(response.data));
-                // Salve as informações do usuário em um cookie
-                Cookies.set('user', JSON.stringify(response.data));
+                const resp = response
+                console.log(resp)
+                // Se o login for bem-sucedido, você receberá um token JWT
+                const token = response.data.token;
+
+                // Armazene o token no local storage
+                Cookies.set('user',JSON.stringify(token),{expires:1});
+
+                // Atualize o estado de autenticação com o token
+                dispatch(loginSuccess(token));
+
+                console.log(token)
             } else {
-                // Trate a resposta como um erro
                 dispatch(loginFailure('Login failed'));
             }
-
         } catch (error) {
-            // Em caso de falha, despache uma ação de falha de login
             dispatch(loginFailure(error.response ? error.response.data.message : 'Unknown error'));
         }
     };
-};
+}
+
 
 // Ação de logout
 export const logoutUser = () => {
     // Remova as informações do usuário do cookie
     Cookies.remove('user');
-    
+
     return {
         type: 'LOGOUT',
     };
 };
-
 
 // Ação de registro bem-sucedido
 export const signupSuccess = (user) => ({
@@ -63,21 +65,32 @@ export const signupFailure = (error) => ({
 });
 
 // Ação de registro assíncrono (pode ser usado com Redux Thunk)
-export const signupUser = ({username,password,email}) => {
+// Ação de registro assíncrono (pode ser usado com Redux Thunk)
+export const signupUser = ({ username, password, role }) => {
     return async (dispatch) => {
         try {
             // Faça uma solicitação ao servidor para registrar o usuário
-            const response = await apiAxios.post('/user/register', {username,password,email});
+            const response = await request('POST', '/auth/register', { login: username, password, role });
 
-            // Se o registro for bem-sucedido, atualize o estado de autenticação
-            dispatch(signupSuccess(response.data));
-
-            // Salve as informações do usuário em um cookie (se necessário)
-            // Cookies.set('user', JSON.stringify(response.data));
-
+            if (response.status === 200) {
+                // Registro bem-sucedido
+                dispatch(signupSuccess(response.data));
+                const formData = { login: username, password }; // Crie o objeto de dados de login
+                dispatch(loginUser(formData)); // Chame a ação de login
+                // Você pode adicionar código adicional aqui, se necessário
+            } else {
+                // Em caso de falha no registro, despache uma ação de falha de registro
+                if (response.data && response.data.message) {
+                    dispatch(signupFailure(response.data.message));
+                } else {
+                    dispatch(signupFailure('Unknown error'));
+                }
+            }
         } catch (error) {
-            // Em caso de falha no registro, despache uma ação de falha de registro
-            dispatch(signupFailure(error.response.data.message));
+            // Trate outros erros, se necessário
+            dispatch(signupFailure('Unknown error'));
         }
     };
 };
+
+

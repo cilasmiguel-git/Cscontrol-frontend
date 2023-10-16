@@ -1,19 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import apiAxios from '../../api/apiAxios';
 import Header from '../../components/header/Header';
 import Footer from '../../components/footer/Footer';
+import { request } from '../../api/axios_helper';
+import { useSelector } from 'react-redux';
 
 const AddCarScreen = () => {
-  const [newFood, setNewFood] = useState({});
-  const [foods, setFoods] = useState([]); // Estado para armazenar a lista de carros
+  const [newCar, setNewCar] = useState({});
+  const [cars, setCars] = useState([]); // Estado para armazenar a lista de carros
   const [successMessage, setSuccessMessage] = useState(''); // Estado para a mensagem de sucesso
+
+  const token = useSelector(state => state.authentication.user); // Obtenha o token JWT do armazenamento local
 
   useEffect(() => {
     // Carregue a lista de carros ao carregar o componente
-    apiAxios
-      .get('/car')
+    request('GET', '/car', null)
       .then((response) => {
-        setFoods(response.data); 
+        setCars(response.data);
       })
       .catch((error) => {
         console.error('Erro ao listar carros:', error);
@@ -21,26 +23,26 @@ const AddCarScreen = () => {
   }, []); // O segundo argumento vazio garante que isso seja executado apenas uma vez durante a montagem inicial
 
   const handleInputChange = (e) => {
-    setNewFood({ ...newFood, [e.target.name]: e.target.value });
+    setNewCar({ ...newCar, [e.target.name]: e.target.value });
   };
 
-
   const handleAddCar = () => {
-    apiAxios
-      .post('/car', newFood)
+    if (!token) {
+      return;
+    }
+    request('POST', '/car', newCar)
       .then(() => {
         // Atualize a lista de carros após a adição bem-sucedida
-        apiAxios
-          .get('/car')
+        request('GET', '/car', null)
           .then((response) => {
-            setFoods(response.data);
+            setCars(response.data);
           })
           .catch((error) => {
             console.error('Erro ao listar carros:', error);
           });
 
         // Limpe o formulário após a adição
-        setNewFood({
+        setNewCar({
           title: '',
           image: '',
           price: '',
@@ -70,21 +72,21 @@ const AddCarScreen = () => {
             type="text"
             name="title"
             placeholder="Nome do Carro"
-            value={newFood.title || ''}
+            value={newCar.title || ''}
             onChange={handleInputChange}
           />
           <input
             type="text"
             name="image"
             placeholder="URL da Imagem"
-            value={newFood.image || ''}
+            value={newCar.image || ''}
             onChange={handleInputChange}
           />
           <input
             type="number"
             name="price"
             placeholder="Preço"
-            value={newFood.price || ''}
+            value={newCar.price || ''}
             onChange={handleInputChange}
           />
           {/* Novos campos */}
@@ -92,34 +94,34 @@ const AddCarScreen = () => {
             type="text"
             name="marca"
             placeholder="Marca"
-            value={newFood.marca}
+            value={newCar.marca || ''}
             onChange={handleInputChange}
           />
           <input
             type="text"
             name="modelo"
             placeholder="Modelo"
-            value={newFood.modelo}
+            value={newCar.modelo || ''}
             onChange={handleInputChange}
           />
           <input
             type="number"
             name="anoFabricacao"
             placeholder="Ano de Fabricação"
-            value={newFood.anoFabricacao}
+            value={newCar.anoFabricacao || ''}
             onChange={handleInputChange}
           />
           <input
             type="number"
             name="anoModelo"
             placeholder="Ano do Modelo"
-            value={newFood.anoModelo}
+            value={newCar.anoModelo || ''}
             onChange={handleInputChange}
           />
           <textarea
             name="descricao"
             placeholder="Descrição"
-            value={newFood.descricao}
+            value={newCar.descricao || ''}
             onChange={handleInputChange}
           />
           <button onClick={handleAddCar}>Adicionar</button>

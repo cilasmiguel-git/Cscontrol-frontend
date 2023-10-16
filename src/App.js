@@ -6,8 +6,10 @@ import Home from './screens/Home/Home';
 import Register from './screens/Register/Register';
 import LoginScreen from './screens/LoginScreen/LoginScreen';
 import CarDetail from './screens/CarDetail/CarDetail';
+import { useSelector } from 'react-redux';
 
 function App() {
+  
   return (
     <div className="App">
       <Router>

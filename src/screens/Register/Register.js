@@ -10,17 +10,16 @@ const Register = () => {
     const navigate = useNavigate()
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const [email, setEmail] = useState('');
     const dispatch = useDispatch();
 
     const handleRegister = () => {
         // Envie uma solicitação de registro para o servidor aqui
-        dispatch(signupUser({ username, password, email }));
-        navigate('/')
+        dispatch(signupUser({ username, password, role: 'USER' }));
+        //navigate('/');
     };
 
     return (
-        <div > {/* Aplicar classe ao contêiner principal */}
+        <div> {/* Aplicar classe ao contêiner principal */}
             <Header></Header>
             <div className='full-size'>
                 <div className="container">
@@ -32,19 +31,12 @@ const Register = () => {
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
                     />
-                    <label>pasword</label>
+                    <label>Senha</label> {/* Alterei de "pasword" para "Senha" */}
                     <input
                         type="password"
                         placeholder="Password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                    />
-                    <label>Email</label>
-                    <input
-                        type="email"
-                        placeholder="Email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
                     />
                     <button onClick={handleRegister}>Register</button>
                 </div>

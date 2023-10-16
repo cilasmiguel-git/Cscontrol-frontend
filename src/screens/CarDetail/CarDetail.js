@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useSelector } from 'react-redux'; // Importe o useSelector
-import apiAxios from '../../api/apiAxios';
 import Header from '../../components/header/Header';
 import './cardetail.css';
 import Footer from '../../components/footer/Footer';
+import { request } from '../../api/axios_helper';
+import { useSelector } from 'react-redux';
 
 const CarDetail = () => {
     const { carId } = useParams();
@@ -13,12 +13,13 @@ const CarDetail = () => {
     const [telefoneInteressado, setTelefoneInteressado] = useState('');
     const [reservaStatus, setReservaStatus] = useState(null);
     const navigate = useNavigate();
+    
+    const token = useSelector(state => state.authentication.user);
 
-    // Use o useSelector para acessar o estado de autenticação
-    const isAuthenticated = useSelector(state => state.authentication.isAuthenticated);
 
     useEffect(() => {
-        apiAxios.get(`/car/${carId}`)
+        // Use a função request para buscar detalhes do carro
+        request('GET', `/car/${carId}`)
             .then((response) => {
                 setCar(response.data);
             })
@@ -29,22 +30,15 @@ const CarDetail = () => {
 
     const handleReservaSubmit = (e) => {
         e.preventDefault();
-
-        if (!isAuthenticated) {
-            // Redirecionar para a página de login se o usuário não estiver autenticado
-            navigate('/login');
-            return;
-        }
-
-        // Enviar uma solicitação para reservar o carro
-        apiAxios.post(`/reserved-car/reserve/${carId}`, null, {
-            params: {
-                nomeInteressado: nomeInteressado,
-                telefoneInteressado: telefoneInteressado,
-            },
-        })
+    
+        // Certifique-se de que seu token JWT está configurado corretamente no cabeçalho da solicitação.
+        request('POST', `/reserved-car/reserve/${carId}?nomeInteressado=${nomeInteressado}&telefoneInteressado=${telefoneInteressado}`)
             .then((response) => {
-                setReservaStatus('Carro reservado com sucesso.');
+                if (response.status === 200) {
+                    setReservaStatus('Carro reservado com sucesso.');
+                } else {
+                    setReservaStatus('Erro ao fazer reserva. Tente novamente mais tarde.');
+                }
             })
             .catch((error) => {
                 console.error('Erro ao fazer reserva:', error);
@@ -72,37 +66,42 @@ const CarDetail = () => {
                         {car.price && <>Preço: {car.price}</>}
                     </div>
                 </div>
+                {token  ? (
                 <div className='cardetail-size'>
-                    {isAuthenticated ? ( // Verifique a autenticação aqui
-                        <form onSubmit={handleReservaSubmit}>
-                            <h2>Fazer uma reserva</h2>
-                            <div>
-                                <label htmlFor="nomeInteressado">Nome do Interessado:</label>
-                                <input
-                                    type="text"
-                                    id="nomeInteressado"
-                                    value={nomeInteressado}
-                                    onChange={(e) => setNomeInteressado(e.target.value)}
-                                    required
-                                />
-                            </div>
-                            <div>
-                                <label htmlFor="telefoneInteressado">Telefone do Interessado:</label>
-                                <input
-                                    type="text"
-                                    id="telefoneInteressado"
-                                    value={telefoneInteressado}
-                                    onChange={(e) => setTelefoneInteressado(e.target.value)}
-                                    required
-                                />
-                            </div>
-                            <button type="submit">Reservar</button>
-                            {reservaStatus && <p>{reservaStatus}</p>}
-                        </form>
-                    ) : (
-                        <p>Faça login para fazer uma reserva.</p>
-                    )}
+                    <form onSubmit={handleReservaSubmit}>
+                        <h2>Fazer uma reserva</h2>
+                        <div>
+                            <label htmlFor="nomeInteressado">Nome do Interessado:</label>
+                            <input
+                                type="text"
+                                id="nomeInteressado"
+                                value={nomeInteressado}
+                                onChange={(e) => setNomeInteressado(e.target.value)}
+                                required
+                            />
+                        </div>
+                        <div>
+                            <label htmlFor="telefoneInteressado">Telefone do Interessado:</label>
+                            <input
+                                type="text"
+                                id="telefoneInteressado"
+                                value={telefoneInteressado}
+                                onChange={(e) => setTelefoneInteressado(e.target.value)}
+                                required
+                            />
+                        </div>
+                        <button type="submit">Reservar</button>
+                        {reservaStatus && <p>{reservaStatus}</p>}
+                    </form>
                 </div>
+                )
+                :
+                (
+                <div className='cardetail-size'>
+                    <h3>Você precisa estar autenticado para fazer uma reserva. Por favor, faça login.</h3>
+                </div>
+                )
+                }
             </div>
             <Footer />
         </div>
