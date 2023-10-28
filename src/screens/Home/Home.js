@@ -15,7 +15,6 @@ const Home = () => {
 
     const isAuthenticated = useSelector(state => state.authentication.isAuthenticated);
     const user = useSelector(state => state.authentication);
-    console.log(user)
     useEffect(() => {
         // Busque a lista de carros reservados do seu back-end e obtenha os IDs dos carros reservados
         request('GET', '/reserved-car/list-reserved-cars')

@@ -7,9 +7,10 @@ import Register from './screens/Register/Register';
 import LoginScreen from './screens/LoginScreen/LoginScreen';
 import CarDetail from './screens/CarDetail/CarDetail';
 import { useSelector } from 'react-redux';
+import ReservedCars from './screens/ReservedCars/ReservedCars';
 
 function App() {
-  
+
   return (
     <div className="App">
       <Router>
@@ -30,7 +31,9 @@ function App() {
             path="/register"
             element={<Register />}
           />
-          <Route path="/car/:carId" element={<CarDetail/>} />
+          <Route path="/car/:carId" element={<CarDetail />} />
+          <Route path="/reservedcars" element={<ReservedCars />} />
+
 
         </Routes>
       </Router>
